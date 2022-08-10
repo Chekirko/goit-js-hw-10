@@ -29,7 +29,9 @@ function onSearchInput(evt) {
   const result = fetchCountries(evt.target.value.trim());
   result.then(countries => {
     renderMarkup(countries);
-  }).catch(error => {Notiflix.Notify.failure("Oops, there is no country with that name");})
+  }).catch(error => {if(error === "Error 404") {
+    Notiflix.Notify.failure("Oops, there is no country with that name")
+  }})
 }
 
 function renderMarkup(countries) {
