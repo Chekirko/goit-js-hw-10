@@ -16,11 +16,20 @@ refs.searchBox.addEventListener(
   debounce(onSearchInput, DEBOUNCE_DELAY)
 );
 
+function clearInput() {
+    refs.countryList.innerHTML = '';
+    refs.countryInfo.innerHTML = '';
+}
+
 function onSearchInput(evt) {
-  const result = fetchCountries(evt.target.value);
+    clearInput();
+  if (evt.target.value.trim() === '') {
+    return;
+  }
+  const result = fetchCountries(evt.target.value.trim());
   result.then(countries => {
     renderMarkup(countries);
-  });
+  }).catch(error => {Notiflix.Notify.failure("Oops, there is no country with that name");})
 }
 
 function renderMarkup(countries) {
@@ -44,6 +53,12 @@ function renderListMarkup(flag, name) {
 
 function renderCardMarkup(country) {
   const { flags, name, capital, languages, population } = country;
-  const cardMarkup = `<div class="card-header"><img class="card-img" src="${flags.svg}"><h1 class="card-name">${name.official}</h1></div><p class="card-text">capital: ${capital}<br>languages: ${languages}<br>population: ${population}</p><p></p><p></p>`;
+  const cardMarkup = `<div class="card-header"><img class="card-img" src="${
+    flags.svg
+  }"><h1 class="card-name">${
+    name.official
+  }</h1></div><p class="card-text">capital: ${capital}<br>languages: ${Object.values(
+    languages
+  )}<br>population: ${population}</p><p></p><p></p>`;
   refs.countryInfo.insertAdjacentHTML('beforeend', cardMarkup);
 }
