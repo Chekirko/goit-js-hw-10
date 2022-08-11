@@ -17,21 +17,25 @@ refs.searchBox.addEventListener(
 );
 
 function clearInput() {
-    refs.countryList.innerHTML = '';
-    refs.countryInfo.innerHTML = '';
+  refs.countryList.innerHTML = '';
+  refs.countryInfo.innerHTML = '';
 }
 
 function onSearchInput(evt) {
-    clearInput();
+  clearInput();
   if (evt.target.value.trim() === '') {
     return;
   }
   const result = fetchCountries(evt.target.value.trim());
-  result.then(countries => {
-    renderMarkup(countries);
-  }).catch(error => {if(error === "Error 404") {
-    Notiflix.Notify.failure("Oops, there is no country with that name")
-  }})
+  result
+    .then(countries => {
+      renderMarkup(countries);
+    })
+    .catch(error => {
+      if (error === 'Error 404') {
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+      }
+    });
 }
 
 function renderMarkup(countries) {
@@ -40,16 +44,18 @@ function renderMarkup(countries) {
       'Too many matches found. Please enter a more specific name.'
     );
   } else if (countries.length <= 10 && countries.length > 1) {
-    countries.map(country =>
-      renderListMarkup(country.flags.svg, country.name.official)
-    );
+    renderListMarkup(countries);
   } else if (countries.length === 1) {
     renderCardMarkup(countries[0]);
   }
 }
 
-function renderListMarkup(flag, name) {
-  const listMarkup = `<li class="country-item"><span class="country-wrapper"><img class="country-img" src="${flag}"></span><p class="country-name">${name}</p></li>`;
+function renderListMarkup(arr) {
+  const listMarkup = arr
+    .map(({ flags, name }) => {
+      return `<li class="country-item"><span class="country-wrapper"><img class="country-img" src="${flags.svg}"></span><p class="country-name">${name.official}</p></li>`;
+    })
+    .join('');
   refs.countryList.insertAdjacentHTML('beforeend', listMarkup);
 }
 
